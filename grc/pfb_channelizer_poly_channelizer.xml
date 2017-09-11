@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<block>
+  <name>poly_channelizer</name>
+  <key>pfb_channelizer_poly_channelizer</key>
+  <category>[pfb_channelizer]</category>
+  <import>import pfb_channelizer</import>
+  <make>pfb_channelizer.poly_channelizer($fft_size, $ch_map)
+self.$(id).set_block_size($fft_size)
+self.$(id).set_channel_map($ch_map)
+  </make>
+
+  <callback>set_block_size($fft_size)</callback>
+  <callback>set_channel_map($ch_map)</callback>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+   <param>
+      <name>FFT Size</name>
+      <key>fft_size</key>
+      <value>128</value>
+      <type>int</type>
+   </param>
+
+   <param>
+      <name>Channel Map</name>
+      <key>ch_map</key>
+      <value>[0, 1, 2, 3]</value>
+      <type>int_vector</type>
+  </param>
+
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+   <sink>
+     <name>in</name>
+     <type>complex</type>
+     <nports>1</nports>
+     <!--<domain>rfnoc</domain>-->
+   </sink>
+
+    <source>
+        <name>out</name>
+        <type>complex</type>
+	<nports>len(($ch_map))</nports>
+    </source>
+</block>

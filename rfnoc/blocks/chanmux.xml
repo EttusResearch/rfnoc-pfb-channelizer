@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--Default XML file-->
+<nocblock>
+  <name>chanmux</name>
+  <blockname>chanmux</blockname>
+  <ids>
+    <id revision="0">F2A3373CFBFB4BFA</id>
+  </ids>
+  <!--One input, one output. If this is used, better have all the info the C++ file.-->
+
+  <!-- Registers -->
+<registers>
+  <setreg>
+    <name>SR_FFT_SIZE</name>
+    <address>129</address>
+  </setreg>
+
+  <readback>
+    <name>RB_NUM_TAPS</name>
+    <address>128</address>
+  </readback>
+  <readback>
+    <name>RB_FFT_SIZE</name>
+    <address>129</address>
+  </readback>
+</registers>
+
+<args>
+  <arg>
+    <name>fft_size</name>
+    <type>int</type>
+    <value>128</value>
+    <action>SR_WRITE("SR_FFT_SIZE", $fft_size)</action>
+  </arg>
+
+</args>
+  <ports>
+    <sink>
+      <name>in</name>
+    </sink>
+    <source>
+      <name>out</name>
+    </source>
+  </ports>
+</nocblock>

@@ -1,0 +1,48 @@
+diff --git a/poly_channelizer_impl.cc b/tmp/poly_channelizer_impl.cc
+index 6282fac..9c9f02d 100644
+--- a/poly_channelizer_impl.cc
++++ b/tmp/poly_channelizer_impl.cc
+@@ -55,6 +55,7 @@ namespace gr {
+             unsigned int max = (unsigned int)*std::max_element(map.begin(), map.end());
+             d_channel_map = map;
+         }
++        set_tag_propagation_policy(TPP_DONT);
+     }
+ 
+     /*
+@@ -67,7 +68,7 @@ namespace gr {
+     void
+     poly_channelizer_impl::forecast (int noutput_items, gr_vector_int &ninput_items_required)
+     {
+-        ninput_items_required[0] = d_fft_size;  //  * noutput_items;
++        ninput_items_required[0] = d_fft_size * noutput_items;
+     }
+ 
+     void
+@@ -116,15 +117,14 @@ namespace gr {
+         std::vector<tag_t>::iterator ti;
+         int in_idx = 0;
+         int num_consumed = 0;
+-        get_tags_in_range(tags, 0, nitems_read(0), nitems_read(0) + noutput_items, EOB_KEY);
++        get_tags_in_range(tags, 0, nitems_read(0), nitems_read(0) + ninput_items[0], EOB_KEY);
+         int oo = 0;
+         size_t noutputs = output_items.size();
+         for (ti = tags.begin(); ti != tags.end(); ti++) {
+             tag_t tag = *ti;
+             uint32_t burst_sz = (uint32_t)(tag.offset - nitems_read(0) - in_idx + 1);
+ 
+-            if (oo == noutput_items) {
+-                std::cout << "breaking loop "<< std::endl;
++            if (oo == noutput_items || num_consumed >= ninput_items[0]) {
+                 break;
+             }
+             else
+@@ -148,7 +148,7 @@ namespace gr {
+         for (unsigned int nn = 0; nn < noutputs; nn++) {
+             produce(nn, oo);
+         }
+-        return num_consumed;
++        return WORK_CALLED_PRODUCE;
+     }
+ 
+   } /* namespace pfb_channelizer */

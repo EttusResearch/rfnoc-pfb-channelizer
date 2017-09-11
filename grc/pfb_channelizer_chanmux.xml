@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<block>
+  <name>RFNoC: chanmux</name>
+  <key>pfb_channelizer_chanmux</key>
+  <category>[pfb_channelizer]</category>
+  <import>import pfb_channelizer</import>
+  <make>pfb_channelizer.chanmux(
+          self.device3,
+          $block_index,
+	  $device_index
+	  )
+self.$(id).set_block_size($fft_size)
+</make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <callback>set_block_size($fft_size)</callback>
+
+  <param>
+     <name>FFT Size</name>
+     <key>fft_size</key>
+     <value>128</value>
+     <type>int</type>
+  </param>
+
+  <!--RFNoC basic block configuration -->
+  <param>
+    <name>Device Select</name>
+    <key>device_index</key>
+    <value>-1</value>
+    <type>int</type>
+    <hide>#if int($device_index()) &lt; 0 then 'part' else 'none'#</hide>
+    <tab>RFNoC Config</tab>
+  </param>
+
+  <param>
+    <name>CHANMUX Select</name>
+    <key>block_index</key>
+    <value>-1</value>
+    <type>int</type>
+    <hide>#if int($block_index()) &lt; 0 then 'part' else 'none'#</hide>
+    <tab>RFNoC Config</tab>
+  </param>
+
+  <param>
+    <name>FPGA Module Name</name>
+    <key>fpga_module_name</key>
+    <value>noc_block_chanmux</value>
+    <type>string</type>
+    <hide>all</hide>
+    <tab>RFNoC Config</tab>
+  </param>
+
+  <sink>
+      <name>taps</name>
+      <type>message</type>
+      <optional>1</optional>
+  </sink>
+
+  <sink>
+    <name>in</name>
+    <type>complex</type>
+    <domain>rfnoc</domain>
+  </sink>
+
+  <source>
+    <name>out</name>
+    <type>complex</type>
+    <domain>rfnoc</domain>
+  </source>
+
+</block>

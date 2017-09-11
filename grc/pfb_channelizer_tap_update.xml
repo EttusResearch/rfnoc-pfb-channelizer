@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<block>
+  <name>tap_update</name>
+  <key>pfb_channelizer_tap_update</key>
+  <category>[pfb_channelizer]</category>
+  <import>import pfb_channelizer</import>
+  <make>pfb_channelizer.tap_update()
+self.$(id).initialize($fft_size)
+<!-- self.$(id).send_taps($fft_size) -->
+  </make>
+  <callback>send_taps($fft_size)</callback>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+   <param>
+     <name>FFT Size</name>
+     <key>fft_size</key>
+     <value>128</value>
+     <type>int</type>
+  </param>
+
+    <source>
+        <name>to_rfnoc</name>
+        <type>message</type>
+        <optional>1</optional>
+    </source>
+
+  <!-- Make one 'sink' node per input. Sub-nodes:
+       * name (an identifier for the GUI)
+       * type
+       * vlen
+       * optional (set to 1 for optional inputs) -->
+</block>

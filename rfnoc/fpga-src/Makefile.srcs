@@ -1,0 +1,3 @@
+$(addprefix /home/phil/git_clones/channelizer/rfnoc-pfb_channelizer/rfnoc/fpga-src/, \
+noc_block_chanmux.v \
+) \

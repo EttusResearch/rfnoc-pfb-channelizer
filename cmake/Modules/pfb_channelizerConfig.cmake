@@ -1,0 +1,30 @@
+INCLUDE(FindPkgConfig)
+PKG_CHECK_MODULES(PC_PFB_CHANNELIZER pfb_channelizer)
+
+FIND_PATH(
+    PFB_CHANNELIZER_INCLUDE_DIRS
+    NAMES pfb_channelizer/api.h
+    HINTS $ENV{PFB_CHANNELIZER_DIR}/include
+        ${PC_PFB_CHANNELIZER_INCLUDEDIR}
+    PATHS ${CMAKE_INSTALL_PREFIX}/include
+          /usr/local/include
+          /usr/include
+)
+
+FIND_LIBRARY(
+    PFB_CHANNELIZER_LIBRARIES
+    NAMES gnuradio-pfb_channelizer
+    HINTS $ENV{PFB_CHANNELIZER_DIR}/lib
+        ${PC_PFB_CHANNELIZER_LIBDIR}
+    PATHS ${CMAKE_INSTALL_PREFIX}/lib
+          ${CMAKE_INSTALL_PREFIX}/lib64
+          /usr/local/lib
+          /usr/local/lib64
+          /usr/lib
+          /usr/lib64
+)
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PFB_CHANNELIZER DEFAULT_MSG PFB_CHANNELIZER_LIBRARIES PFB_CHANNELIZER_INCLUDE_DIRS)
+MARK_AS_ADVANCED(PFB_CHANNELIZER_LIBRARIES PFB_CHANNELIZER_INCLUDE_DIRS)
+

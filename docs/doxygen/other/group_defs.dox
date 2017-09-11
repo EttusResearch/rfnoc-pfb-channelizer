@@ -1,0 +1,7 @@
+/*!
+ * \defgroup block GNU Radio PFB_CHANNELIZER C++ Signal Processing Blocks
+ * \brief All C++ blocks that can be used from the PFB_CHANNELIZER GNU Radio
+ *        module are listed here or in the subcategories below.
+ *
+ */
+
