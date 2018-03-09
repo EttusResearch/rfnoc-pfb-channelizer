@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /*
- * Copyright 2017 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2018 Ettus Research
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,8 +61,6 @@ namespace gr {
             ::uhd::stream_args_t("fc32", "sc16"))
     {
         d_fft_size = 128;  // 128 by default.
-        message_port_register_in(pmt::mp("taps"));
-        set_msg_handler(pmt::mp("taps"), boost::bind(&chanmux_impl::handler, this, _1));
         gr::block::set_min_noutput_items(256);
     }
 
@@ -73,28 +71,6 @@ namespace gr {
     {
     }
 
-void
-chanmux_impl::handler(pmt::pmt_t msg)
-{
-        // Got new scramb_seq
-        printf("inside handler\n");
-        std::vector<int> tap_block(pmt::s32vector_elements(pmt::cdr(msg)));
-        chanmux_impl::set_rfnoc_taps(tap_block);
-}
-
-// int
-// chanmux_impl::nextpow2(unsigned int i)
-// {
-//     int n = 0;
-//     while (2)
-// }
-
-void
-chanmux_impl::set_rfnoc_taps(const std::vector<int>& taps)
-{
-    gr::thread::scoped_lock guard(d_mutex);
-    get_block_ctrl_throw< ::uhd::rfnoc::chanmux_block_ctrl>()->set_taps(taps);
-}
 
 void
 chanmux_impl::set_block_size(const int fft_size)

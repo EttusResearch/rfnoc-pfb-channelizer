@@ -70,8 +70,7 @@ module noc_block_channelizer_tb();
     ** Test 4 -- Load Coefficients
     ********************************************************/
     `TEST_CASE_START("Load Coefficients");
-    fd_coeffs = $fopen("/home/cuervo/git/rfnoc-pfb-channelizer/rfnoc/testbenches/noc_block_channelizer_tb/M_32_taps.bin", "r");
-    //fd_coeffs = $fopen("M_32_taps.bin", "r");
+    fd_coeffs = $fopen("M_32_taps.bin", "r");
     $display("current file position = %d", $ftell(fd_coeffs));
     temp = $fseek(fd_coeffs, 0, `SEEK_END);
     file_size = $ftell(fd_coeffs) >> 2;  // this is in bytes / 4.

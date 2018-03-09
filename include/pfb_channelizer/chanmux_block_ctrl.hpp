@@ -24,6 +24,11 @@
 
 #include <uhd/rfnoc/source_block_ctrl_base.hpp>
 #include <uhd/rfnoc/sink_block_ctrl_base.hpp>
+#include <gnuradio/fft/fft.h>
+#include <volk/volk.h>
+#include <gnuradio/types.h>
+
+using namespace gr::fft;
 
 namespace uhd {
     namespace rfnoc {
@@ -35,14 +40,13 @@ class UHD_API chanmux_block_ctrl : public source_block_ctrl_base, public sink_bl
 {
 public:
     UHD_RFNOC_BLOCK_OBJECT(chanmux_block_ctrl)
-    virtual void set_taps(const std::vector<int>& taps) = 0;
-    //! Returns the number of filter taps in this block.
-    virtual size_t get_n_taps() const = 0;
+
     virtual size_t get_fft_size() = 0;
     virtual void set_fft_size(const int fft_size) = 0;
     /*!
      * Your block configuration here
     */
+
 }; /* class chanmux_block_ctrl*/
 
 }} /* namespace uhd::rfnoc */

@@ -39,8 +39,7 @@ wire [47:0] pouti, poutq;
 wire [35:0] delay[0:23];
 wire [35:0] delay_sig;
 
-reg [8:0] phase_d[2:0];
-reg [8:0] phase_d1, phase_d2, phase_d3, phase_s;
+reg [8:0] phase_d[0:29];
 reg [7:0] valid_d;
 
 reg [10:0] wr_addr_d[0:71];
@@ -49,7 +48,7 @@ reg [10:0] rd_addr, next_rd_addr;
 reg [10:0] wr_addr, next_wr_addr;
 reg [10:0] rd_addr_d[0:22];
 
-reg [10:0] next_rd_addr_d[0:23];
+reg [10:0] next_rd_addr_d[0:22];
 
 reg [35:0] input_sig_d1, input_sig_d2, input_sig_d3;
 reg [35:0] sig, next_sig;
@@ -58,9 +57,8 @@ reg [1:0] offset_cnt, next_offset_cnt;
 reg [1:0] offset_cnt_prev, next_offset_cnt_prev;
 
 reg s_axis_reload_tvalid_d1;
-reg [13:0] taps_addr;
+reg [13:0] taps_addr, next_taps_addr;
 
-reg [13:0] next_taps_addr;
 reg [24:0] taps_dina, next_taps_dina;
 reg [8:0] rom_addr, next_rom_addr;
 reg [24:0] rom_data, next_rom_data;
@@ -70,12 +68,12 @@ reg new_coeffs, next_new_coeffs;
 reg [23:0] taps_we, next_taps_we;
 
 reg [9:0] fft_max;
-reg [8:0] fft_max_slice;  // , fft_max_m1;
+reg [8:0] fft_max_slice;
 reg [8:0] fft_half;
 
 assign valid_out = valid_d[7];
 assign output_sig = {pouti[40:23], poutq[40:23]};
-assign phase_out = phase_s;
+assign phase_out = phase_d[29];
 assign s_axis_reload_tready = reload_tready;
 
 
@@ -88,10 +86,9 @@ begin
     fft_max_slice <= fft_max[8:0];
     fft_half <= fft_size >> 1;
 
-    phase_d1 <= rd_addr[8:0] - 9'd27;
-    phase_d2 <= phase_d1 & fft_max_slice;
-    phase_d3 <= phase_d2;
-    phase_s <= phase_d3;
+    phase_d[0] <= rd_addr[8:0];
+    phase_d[1] <= phase_d[0] & fft_max_slice;
+    phase_d[2] <= phase_d[1];
     s_axis_reload_tvalid_d1 <= s_axis_reload_tvalid;
 
     input_sig_d1 <= input_sig;
@@ -123,32 +120,54 @@ begin
     wr_addr_d[66] <= {~rd_addr_d[20][10], rd_addr_d[20][9], rd_addr_d[20][8:0]};
     wr_addr_d[69] <= {~rd_addr_d[21][10], rd_addr_d[21][9], rd_addr_d[21][8:0]};
 
-    for (n=1; n<3; n=n+1) begin
-        wr_addr_d[n] <= wr_addr_d[n-1];
-        wr_addr_d[n+3] <= wr_addr_d[n+2];
-        wr_addr_d[n+6] <= wr_addr_d[n+5];
-        wr_addr_d[n+9] <= wr_addr_d[n+8];
-        wr_addr_d[n+12] <= wr_addr_d[n+11];
-        wr_addr_d[n+15] <= wr_addr_d[n+14];
-        wr_addr_d[n+18] <= wr_addr_d[n+17];
-        wr_addr_d[n+21] <= wr_addr_d[n+20];
-        wr_addr_d[n+24] <= wr_addr_d[n+23];
-        wr_addr_d[n+27] <= wr_addr_d[n+26];
-        wr_addr_d[n+30] <= wr_addr_d[n+29];
-        wr_addr_d[n+33] <= wr_addr_d[n+32];
-        wr_addr_d[n+36] <= wr_addr_d[n+35];
-        wr_addr_d[n+39] <= wr_addr_d[n+38];
-        wr_addr_d[n+42] <= wr_addr_d[n+41];
-        wr_addr_d[n+45] <= wr_addr_d[n+44];
-        wr_addr_d[n+48] <= wr_addr_d[n+47];
-        wr_addr_d[n+51] <= wr_addr_d[n+50];
-        wr_addr_d[n+54] <= wr_addr_d[n+53];
-        wr_addr_d[n+57] <= wr_addr_d[n+56];
-        wr_addr_d[n+60] <= wr_addr_d[n+59];
-        wr_addr_d[n+63] <= wr_addr_d[n+62];
-        wr_addr_d[n+66] <= wr_addr_d[n+65];
-        wr_addr_d[n+69] <= wr_addr_d[n+68];
-    end
+    wr_addr_d[1] <= wr_addr_d[0];
+    wr_addr_d[2] <= wr_addr_d[1];
+    wr_addr_d[4] <= wr_addr_d[3];
+    wr_addr_d[5] <= wr_addr_d[4];
+    wr_addr_d[7] <= wr_addr_d[6];
+    wr_addr_d[8] <= wr_addr_d[7];
+    wr_addr_d[10] <= wr_addr_d[9];
+    wr_addr_d[11] <= wr_addr_d[10];
+    wr_addr_d[13] <= wr_addr_d[12];
+    wr_addr_d[14] <= wr_addr_d[13];
+    wr_addr_d[16] <= wr_addr_d[15];
+    wr_addr_d[17] <= wr_addr_d[16];
+    wr_addr_d[19] <= wr_addr_d[18];
+    wr_addr_d[20] <= wr_addr_d[19];
+    wr_addr_d[22] <= wr_addr_d[21];
+    wr_addr_d[23] <= wr_addr_d[22];
+    wr_addr_d[25] <= wr_addr_d[24];
+    wr_addr_d[26] <= wr_addr_d[25];
+    wr_addr_d[28] <= wr_addr_d[27];
+    wr_addr_d[29] <= wr_addr_d[28];
+    wr_addr_d[31] <= wr_addr_d[30];
+    wr_addr_d[32] <= wr_addr_d[31];
+    wr_addr_d[34] <= wr_addr_d[33];
+    wr_addr_d[35] <= wr_addr_d[34];
+    wr_addr_d[37] <= wr_addr_d[36];
+    wr_addr_d[38] <= wr_addr_d[37];
+    wr_addr_d[40] <= wr_addr_d[39];
+    wr_addr_d[41] <= wr_addr_d[40];
+    wr_addr_d[43] <= wr_addr_d[42];
+    wr_addr_d[44] <= wr_addr_d[43];
+    wr_addr_d[46] <= wr_addr_d[45];
+    wr_addr_d[47] <= wr_addr_d[46];
+    wr_addr_d[49] <= wr_addr_d[48];
+    wr_addr_d[50] <= wr_addr_d[49];
+    wr_addr_d[52] <= wr_addr_d[51];
+    wr_addr_d[53] <= wr_addr_d[52];
+    wr_addr_d[55] <= wr_addr_d[54];
+    wr_addr_d[56] <= wr_addr_d[55];
+    wr_addr_d[58] <= wr_addr_d[57];
+    wr_addr_d[59] <= wr_addr_d[58];
+    wr_addr_d[61] <= wr_addr_d[60];
+    wr_addr_d[62] <= wr_addr_d[61];
+    wr_addr_d[64] <= wr_addr_d[63];
+    wr_addr_d[65] <= wr_addr_d[64];
+    wr_addr_d[67] <= wr_addr_d[66];
+    wr_addr_d[68] <= wr_addr_d[67];
+    wr_addr_d[70] <= wr_addr_d[69];
+    wr_addr_d[71] <= wr_addr_d[70];
     sig_d1 <= sig;
     sig_d2 <= sig_d1;
     sig_d3 <= sig_d2;
@@ -161,45 +180,72 @@ integer m;
 always @(posedge clk, posedge sync_reset)
 begin
 	if (sync_reset == 1'b1) begin
-        offset_cnt <= 1;  // this ensures that the first read / write is to offset 0.
-        offset_cnt_prev <= 0;
-        sig <= 0;
-        valid_d <= 0;
-        for (n=0; n<4; n=n+1) begin
-            phase_d[n] <= 0;
-        end
-        for (m=0; m<23; m=m+1) begin
-            rd_addr_d[m] <= 0;
-        end
-        new_coeffs <= 1'b1;
-        taps_addr <= 0;
-        rom_addr <= 0;
-        rom_data <= 0;
-        taps_we <= 0;
-        taps_dina <= 0;
-        rd_addr <= 0;
-        wr_addr <= 0;
+      offset_cnt <= 1;  // this ensures that the first read / write is to offset 0.
+      offset_cnt_prev <= 0;
+      sig <= 0;
+      valid_d <= 0;
+      for (m=0; m<23; m=m+1) begin
+          rd_addr_d[m] <= 0;
+      end
+      new_coeffs <= 1'b1;
+      taps_addr <= 0;
+      rom_addr <= 0;
+      rom_data <= 0;
+      taps_we <= 0;
+      taps_dina <= 0;
+      rd_addr <= 0;
+      wr_addr <= 0;
 	end else begin
-        offset_cnt <= next_offset_cnt;
-        offset_cnt_prev <= next_offset_cnt_prev;
-        sig <= next_sig;
-        valid_d <= {valid_d[6:0], valid_i};
-        phase_d[0] <= phase;
-        for (n=1; n<4; n=n+1) begin
-            phase_d[n] <= phase_d[n-1];
-        end
-        for (m=0; m<23; m=m+1) begin
-            rd_addr_d[m] <= next_rd_addr_d[m];
-        end
-        new_coeffs <= next_new_coeffs;
-        taps_addr <= next_taps_addr;
-        rom_addr <= next_rom_addr;
-        rom_data <= next_rom_data;
-        taps_we <= next_taps_we;
-        taps_dina <= next_taps_dina;
-        rd_addr <= next_rd_addr;
-        wr_addr <= next_wr_addr;
+      offset_cnt <= next_offset_cnt;
+      offset_cnt_prev <= next_offset_cnt_prev;
+      sig <= next_sig;
+      valid_d <= {valid_d[6:0], valid_i};
+      phase_d[0] <= phase;
+      for (m=0; m<23; m=m+1) begin
+          rd_addr_d[m] <= next_rd_addr_d[m];
+      end
+      new_coeffs <= next_new_coeffs;
+      taps_addr <= next_taps_addr;
+      rom_addr <= next_rom_addr;
+      rom_data <= next_rom_data;
+      taps_we <= next_taps_we;
+      taps_dina <= next_taps_dina;
+      rd_addr <= next_rd_addr;
+      wr_addr <= next_wr_addr;
 	end
+end
+
+always @(posedge clk)
+begin
+    if (valid_d[6] == 1'b1) begin
+        phase_d[3] <= phase_d[2];
+        phase_d[4] <= phase_d[3];
+        phase_d[5] <= phase_d[4];
+        phase_d[6] <= phase_d[5];
+        phase_d[7] <= phase_d[6];
+        phase_d[8] <= phase_d[7];
+        phase_d[9] <= phase_d[8];
+        phase_d[10] <= phase_d[9];
+        phase_d[11] <= phase_d[10];
+        phase_d[12] <= phase_d[11];
+        phase_d[13] <= phase_d[12];
+        phase_d[14] <= phase_d[13];
+        phase_d[15] <= phase_d[14];
+        phase_d[16] <= phase_d[15];
+        phase_d[17] <= phase_d[16];
+        phase_d[18] <= phase_d[17];
+        phase_d[19] <= phase_d[18];
+        phase_d[20] <= phase_d[19];
+        phase_d[21] <= phase_d[20];
+        phase_d[22] <= phase_d[21];
+        phase_d[23] <= phase_d[22];
+        phase_d[24] <= phase_d[23];
+        phase_d[25] <= phase_d[24];
+        phase_d[26] <= phase_d[25];
+        phase_d[27] <= phase_d[26];
+        phase_d[28] <= phase_d[27];
+        phase_d[29] <= phase_d[28];
+    end
 end
 
 // reload process
@@ -209,7 +255,7 @@ begin
     next_taps_dina = taps_dina;
     next_new_coeffs = new_coeffs;
 
-    next_rom_addr = taps_addr[11:0];
+    next_rom_addr = taps_addr[8:0];
     next_rom_data = taps_dina;
     if (s_axis_reload_tvalid == 1'b1) begin
         next_taps_dina = s_axis_reload_tdata[24:0];
@@ -278,7 +324,7 @@ begin
     end
 
     if (valid_d[2] == 1'b1) begin
-        if ((phase_d[2] & fft_half) != 9'd0) begin
+        if ((phase_d[2] & fft_half) != 8'd0) begin
             next_sig = delay_sig;
         end else begin
             next_sig = input_sig_d3;
@@ -376,6 +422,7 @@ pfb_mac_0 pfb_mac_i_start (
   .P()          // output wire [42 : 0] P
 );
 
+// Latency = 6
 pfb_mac_0 pfb_mac_q_start (
   .CLK(clk),      // input wire CLK
   .CE(valid_d[6]),

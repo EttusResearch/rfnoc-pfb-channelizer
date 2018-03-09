@@ -147,9 +147,6 @@ class tap_update(gr.sync_block):
         # compute noise and signal gain.
         s_gain = np.abs(np.max(np.sum(poly_fil, axis=1)))
 
-        path_gain = np.max(np.abs(np.sum(poly_fil, axis=1)))
-        bit_gain = self.nextpow2(np.max(s_gain))
-
         gain_msb = self.nextpow2(s_gain)
         max_coef_val = 2. ** gain_msb - 1
         in_use = s_gain / max_coef_val
@@ -182,8 +179,8 @@ class tap_update(gr.sync_block):
 
     def gen_tap_vec(self, poly_fil, fft_size):
         """
-            Helper function that generates a single file used for
-            programming the interanal ram
+            Helper function that generates a single vector used for programming
+            the internal ram
         """
         pfb_fil = copy.deepcopy(poly_fil)
         pfb_fil = pfb_fil.T

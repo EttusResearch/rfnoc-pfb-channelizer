@@ -29,7 +29,3 @@ try:
 	from pfb_channelizer_swig import *
 except ImportError:
 	pass
-
-# import any pure python here
-from tap_update import tap_update
-#
