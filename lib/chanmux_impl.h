@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /*
- * Copyright 2017 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2018 Ettus Research
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,6 @@ namespace gr {
      private:
          size_t d_fft_size;
          gr::thread::mutex d_mutex; // mutex to protect set/work access
-         void handler(pmt::pmt_t msg);
-         void set_rfnoc_taps(const std::vector<int> &taps);
         //  int nextpow2(unsigned int i);
 
      public:

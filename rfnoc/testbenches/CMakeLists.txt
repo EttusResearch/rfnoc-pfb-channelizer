@@ -1,1 +1,2 @@
 add_subdirectory(noc_block_chanmux_tb)
+add_subdirectory(noc_block_channelizer_tb)

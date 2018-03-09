@@ -53,11 +53,11 @@ self.$(id).set_block_size($fft_size)
     <tab>RFNoC Config</tab>
   </param>
 
-  <sink>
+  <!-- <sink>
       <name>taps</name>
       <type>message</type>
       <optional>1</optional>
-  </sink>
+  </sink> -->
 
   <sink>
     <name>in</name>
