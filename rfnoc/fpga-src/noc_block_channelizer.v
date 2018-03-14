@@ -1,7 +1,12 @@
+//
+// Copyright 2016-2018 Ettus Research, A National Instruments Company
+//
+// SPDX-License-Identifier: LGPL-3.0
+//
+// Module: noc_block_channelizer
+// Description:
+// Top block for Channelization using RFNoC
 
-//
-// Copyright 2015 Ettus Research
-//
 module noc_block_channelizer #(
   parameter NOC_ID = 64'hF2A3373CFBFB4BFA,
   parameter STR_SINK_FIFOSIZE = 11)
@@ -201,48 +206,48 @@ module noc_block_channelizer #(
     .o_tvalid(),
     .o_tready(1'b1));
 
-    // FIR filter coefficient reload bus
-    // (see Xilinx FIR Filter Compiler documentation)
-    axi_setting_reg #(
-      .ADDR(SR_RELOAD),
-      .USE_ADDR_LAST(1),
-      .ADDR_LAST(SR_RELOAD_LAST),
-      .WIDTH(32),
-      .USE_FIFO(1),
-      .FIFO_SIZE(7))
-    set_coeff (
-      .clk(ce_clk),
-      .reset(ce_rst),
-      .set_stb(set_stb),
-      .set_addr(set_addr),
-      .set_data(set_data),
-      .o_tdata(m_axis_reload_tdata),
-      .o_tlast(m_axis_reload_tlast),
-      .o_tvalid(m_axis_reload_tvalid),
-      .o_tready(m_axis_reload_tready));
+  // FIR filter coefficient reload bus
+  // (see Xilinx FIR Filter Compiler documentation)
+  axi_setting_reg #(
+    .ADDR(SR_RELOAD),
+    .USE_ADDR_LAST(1),
+    .ADDR_LAST(SR_RELOAD_LAST),
+    .WIDTH(32),
+    .USE_FIFO(1),
+    .FIFO_SIZE(7))
+  set_coeff (
+    .clk(ce_clk),
+    .reset(ce_rst),
+    .set_stb(set_stb),
+    .set_addr(set_addr),
+    .set_data(set_data),
+    .o_tdata(m_axis_reload_tdata),
+    .o_tlast(m_axis_reload_tlast),
+    .o_tvalid(m_axis_reload_tvalid),
+    .o_tready(m_axis_reload_tready));
 
   channelizer_top channelizer_top
   (
-      .sync_reset(ce_rst),
-      .ce_clk(ce_clk),
+    .sync_reset(ce_rst),
+    .ce_clk(ce_clk),
 
-      .fft_size(fft_size),
+    .fft_size(fft_size),
 
-      .s_axis_tdata(m_axis_data_tdata),
-      .s_axis_tvalid(m_axis_data_tvalid),
-      .s_axis_tready(m_axis_data_tready),
+    .s_axis_tdata(m_axis_data_tdata),
+    .s_axis_tvalid(m_axis_data_tvalid),
+    .s_axis_tready(m_axis_data_tready),
 
-      .s_axis_reload_tdata(m_axis_reload_tdata),
-      .s_axis_reload_tlast(m_axis_reload_tlast),
-      .s_axis_reload_tvalid(m_axis_reload_tvalid),
-      .s_axis_reload_tready(m_axis_reload_tready),
+    .s_axis_reload_tdata(m_axis_reload_tdata),
+    .s_axis_reload_tlast(m_axis_reload_tlast),
+    .s_axis_reload_tvalid(m_axis_reload_tvalid),
+    .s_axis_reload_tready(m_axis_reload_tready),
 
-      .eob_tag(eob_tag),
-      .m_axis_tdata(s_axis_data_tdata),
-      .m_axis_tuser(),
-      .m_axis_tvalid(s_axis_data_tvalid),
-      .m_axis_tlast(s_axis_data_tlast),
-      .m_axis_tready(s_axis_data_tready)
+    .eob_tag(eob_tag),
+    .m_axis_tdata(s_axis_data_tdata),
+    .m_axis_tuser(),
+    .m_axis_tvalid(s_axis_data_tvalid),
+    .m_axis_tlast(s_axis_data_tlast),
+    .m_axis_tready(s_axis_data_tready)
   );
 
 endmodule
