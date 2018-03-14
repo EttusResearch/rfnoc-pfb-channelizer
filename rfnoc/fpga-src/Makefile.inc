@@ -3,7 +3,6 @@
 ##################################################
 
 RFNOC_SRCS += $(addprefix $(RFNOC_PFB_CHANNELIZER_DIR)/fpga-src/, \
-noc_block_chanmux.v \
 count_cycle_iw36_cw11.v \
 count_items_iw36_cw11.v \
 input_buffer.v \

@@ -49,9 +49,9 @@ namespace gr {
      * The private constructor
      */
     chanmux_impl::chanmux_impl(
-         const gr::ettus::device3::sptr &dev,
-         const int block_select,
-         const int device_select
+        const gr::ettus::device3::sptr &dev,
+        const int block_select,
+        const int device_select
     )
       : gr::ettus::rfnoc_block("chanmux"),
         gr::ettus::rfnoc_block_impl(
@@ -71,27 +71,21 @@ namespace gr {
     {
     }
 
+    void
+    chanmux_impl::set_block_size(const int fft_size)
+    {
+        gr::thread::scoped_lock guard(d_mutex);
+        get_block_ctrl_throw< ::uhd::rfnoc::chanmux_block_ctrl>()-> set_fft_size(fft_size);
 
-void
-chanmux_impl::set_block_size(const int fft_size)
-{
-    gr::thread::scoped_lock guard(d_mutex);
-    get_block_ctrl_throw< ::uhd::rfnoc::chanmux_block_ctrl>()-> set_fft_size(fft_size);
+        // read back to ensure HW and SW are in sync.
+        d_fft_size = get_block_ctrl_throw< ::uhd::rfnoc::chanmux_block_ctrl >()->get_fft_size();
+        // now always pulling blocks of 256 samples.
+    }
 
-    // read back to ensure HW and SW are in sync.
-    d_fft_size = get_block_ctrl_throw< ::uhd::rfnoc::chanmux_block_ctrl >()->get_fft_size();
-    // now always pulling blocks of 256 samples.
-
-}
-
-
-void
-chanmux_impl::get_block_size()
-{
-    d_fft_size = get_block_ctrl_throw< ::uhd::rfnoc::chanmux_block_ctrl >()-> get_fft_size();
-}
-
-
-
+    void
+    chanmux_impl::get_block_size()
+    {
+        d_fft_size = get_block_ctrl_throw< ::uhd::rfnoc::chanmux_block_ctrl >()-> get_fft_size();
+    }
   } /* namespace pfb_channelizer */
 } /* namespace gr */

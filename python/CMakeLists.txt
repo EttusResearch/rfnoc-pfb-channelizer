@@ -31,10 +31,9 @@ endif()
 GR_PYTHON_INSTALL(
     FILES
     __init__.py
-    tap_update.py DESTINATION ${GR_PYTHON_DIR}/pfb_channelizer
+    DESTINATION ${GR_PYTHON_DIR}/pfb_channelizer
 )
 
-# tap_update.py
 ########################################################################
 # Handle the unit tests
 ########################################################################

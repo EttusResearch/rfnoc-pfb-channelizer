@@ -1,25 +1,28 @@
-/*****************************************************************************/
 //
+// Copyright 2016-2018 Ettus Research, A National Instruments Company
 //
+// SPDX-License-Identifier: LGPL-3.0
+//
+// Module: input_buffer
+// Description:
 // The muxing shown provides the capability for the input buffer to be reading one dual port ram while
 // the other is being written. The fixed counters provide the appropriate addressing for both reading
 // and writing RAMs. Note that input data rate must be 1/2 the clock rate to maintain unthrottled performance
-/*****************************************************************************/
 
 module input_buffer
 (
-    input sync_reset,
-    input clk,
+  input sync_reset,
+  input clk,
 
-    input [35:0] s_tdata,
-    input s_tvalid,
-    output s_tready,
+  input [35:0] s_tdata,
+  input s_tvalid,
+  output s_tready,
 
-    input [9:0] fft_size,
+  input [9:0] fft_size,
 
-    output [35:0] output_sig,
-    output [8:0] phase,
-    output valid_out
+  output [35:0] output_sig,
+  output [8:0] phase,
+  output valid_out
 );
 
 
@@ -93,33 +96,33 @@ assign output_sig = data;
 always @(posedge clk, posedge sync_reset)
 begin
 	if (sync_reset == 1'b1) begin
-        we_side <= 1'b0;
-        rd_side <= 1'b0;
-        we_0 <= 1'b0;
-        we_1 <= 1'b0;
-        state <= S_IDLE;
-        rd_en <= 1'b0;
-        rd_en_d <= 0;
-        data <= 0;
-        tvalid <= 1'b0;
-        phase_s <= 0;
-        read_addr <= 0;
-        tready <= 1'b1;
-        write_done <= 1'b0;
+    we_side <= 1'b0;
+    rd_side <= 1'b0;
+    we_0 <= 1'b0;
+    we_1 <= 1'b0;
+    state <= S_IDLE;
+    rd_en <= 1'b0;
+    rd_en_d <= 0;
+    data <= 0;
+    tvalid <= 1'b0;
+    phase_s <= 0;
+    read_addr <= 0;
+    tready <= 1'b1;
+    write_done <= 1'b0;
 	end else begin
-        we_side <= next_we_side;
-        rd_side <= next_rd_side;
-        we_0 <= next_we_0;
-        we_1 <= next_we_1;
-        state <= next_state;
-        rd_en <= next_rd_en;
-        rd_en_d <= {rd_en_d[2:0], rd_en};
-        data <= next_data;
-        tvalid <= next_tvalid;
-        phase_s <= next_phase;
-        read_addr <= next_read_addr;
-        tready <= next_tready;
-        write_done <= next_write_done;
+    we_side <= next_we_side;
+    rd_side <= next_rd_side;
+    we_0 <= next_we_0;
+    we_1 <= next_we_1;
+    state <= next_state;
+    rd_en <= next_rd_en;
+    rd_en_d <= {rd_en_d[2:0], rd_en};
+    data <= next_data;
+    tvalid <= next_tvalid;
+    phase_s <= next_phase;
+    read_addr <= next_read_addr;
+    tready <= next_tready;
+    write_done <= next_write_done;
 	end
 end
 
@@ -128,125 +131,125 @@ end
 // by the read_window signal.
 always @(posedge clk)
 begin
-    addra <= count_offset;
-    count_data_d1 <= count_data;
-    count_data_d2 <= count_data_d1;
-    count_valid_d1 <= count_valid;
-    count_value_d1 <= count_value;
-    count_offset <= roll_over - count_value;
-    read_addr_d1 <= read_addr;
-    read_addr_d2 <= read_addr_d1;
-    read_addr_d3 <= read_addr_d2;
-    read_addr_d4 <= read_addr_d3;
-    fft_max <= fft_size - 1;
-    fft_max_slice <= fft_max[8:0];
-    roll_over <= fft_max_slice[8:1];
-    rd_side_d <= {rd_side_d[2:0], rd_side};
-    roll_over_offset <= roll_over - 2;
-    roll_over_m1 <= roll_over - 1;
-    take_data_d1 <= take_data;
-    fft_max_m3 <= fft_max - 3;
-    fft_max_m2 <= fft_max - 2;
-    fft_max_m1 <= fft_max - 1;
+  addra <= count_offset;
+  count_data_d1 <= count_data;
+  count_data_d2 <= count_data_d1;
+  count_valid_d1 <= count_valid;
+  count_value_d1 <= count_value;
+  count_offset <= roll_over - count_value;
+  read_addr_d1 <= read_addr;
+  read_addr_d2 <= read_addr_d1;
+  read_addr_d3 <= read_addr_d2;
+  read_addr_d4 <= read_addr_d3;
+  fft_max <= fft_size - 1;
+  fft_max_slice <= fft_max[8:0];
+  roll_over <= fft_max_slice[8:1];
+  rd_side_d <= {rd_side_d[2:0], rd_side};
+  roll_over_offset <= roll_over - 2;
+  roll_over_m1 <= roll_over - 1;
+  take_data_d1 <= take_data;
+  fft_max_m3 <= fft_max - 3;
+  fft_max_m2 <= fft_max - 2;
+  fft_max_m1 <= fft_max - 1;
 end
 
 // write process.  Keeps track of current buffer being written.
 always @*
 begin
-    next_we_0 = 1'b0;
-    next_we_1 = 1'b0;
-    next_we_side = we_side;
-    if (count_valid_d1 == 1'b1) begin
-        if (we_side == 1'b0) begin
-            next_we_0 = 1'b1;
-        end else begin
-            next_we_1 = 1'b1;
-        end
-        if (count_offset == 0) begin
-            next_we_side = ~we_side;
-        end
+  next_we_0 = 1'b0;
+  next_we_1 = 1'b0;
+  next_we_side = we_side;
+  if (count_valid_d1 == 1'b1) begin
+    if (we_side == 1'b0) begin
+      next_we_0 = 1'b1;
+    end else begin
+      next_we_1 = 1'b1;
     end
+    if (count_offset == 0) begin
+      next_we_side = ~we_side;
+    end
+  end
 end
 
 // tready process
 always @*
 begin
-    next_tready = tready;
-    if (state == S_IDLE) begin
-        next_tready = 1'b1;
-    end else begin
-        if (read_window == 1'b1) begin
-            next_tready = 1'b1;
-        end else if (count_value == roll_over_offset && take_data == 1'b1 && take_data_d1 == 1'b1) begin
-            next_tready = 1'b0;
-        end else if (count_value == roll_over_m1 && take_data == 1'b1) begin
-            next_tready = 1'b0;
-        end
+  next_tready = tready;
+  if (state == S_IDLE) begin
+    next_tready = 1'b1;
+  end else begin
+    if (read_window == 1'b1) begin
+      next_tready = 1'b1;
+    end else if (count_value == roll_over_offset && take_data == 1'b1 && take_data_d1 == 1'b1) begin
+      next_tready = 1'b0;
+    end else if (count_value == roll_over_m1 && take_data == 1'b1) begin
+      next_tready = 1'b0;
     end
+  end
 end
 
 // read process.  Controls the read pointers of the RAMs.  Pushes data out of the input buffers
 // buffers.
 always @*
 begin
-    next_state = state;
-    next_rd_en = rd_en;
-    next_rd_side = rd_side;
-    next_read_addr = read_addr;
-    next_write_done = write_done;
-    case (state)
-        S_IDLE:
-        begin
-            if (write_d == 1'b1) begin
-                next_rd_en = 1'b1;
-                next_read_addr = 0;
-                next_state = S_READ;
-                next_rd_side = we_side;
-                next_write_done = 1'b0;
-            end
+  next_state = state;
+  next_rd_en = rd_en;
+  next_rd_side = rd_side;
+  next_read_addr = read_addr;
+  next_write_done = write_done;
+  case (state)
+    S_IDLE:
+    begin
+      if (write_d == 1'b1) begin
+        next_rd_en = 1'b1;
+        next_read_addr = 0;
+        next_state = S_READ;
+        next_rd_side = we_side;
+        next_write_done = 1'b0;
+      end
+    end
+    S_READ:
+    begin
+      if (read_addr == fft_max_slice) begin
+        if (write_d == 1'b1 || write_done == 1'b1) begin
+          next_rd_en = 1'b1;
+          next_read_addr = 0;
+          next_state = S_READ;
+          next_rd_side = ~rd_side;
+          next_write_done = 1'b0;
+        end else begin
+          next_state = S_IDLE;
+          next_rd_en = 1'b0;
         end
-        S_READ:
-        begin
-            if (read_addr == fft_max_slice) begin
-                if (write_d == 1'b1 || write_done == 1'b1) begin
-                    next_rd_en = 1'b1;
-                    next_read_addr = 0;
-                    next_state = S_READ;
-                    next_rd_side = ~rd_side;
-                    next_write_done = 1'b0;
-                end else begin
-                    next_state = S_IDLE;
-                    next_rd_en = 1'b0;
-                end
-            end else begin
-                next_read_addr = read_addr + 1;
-                next_rd_en = 1'b1;
-                if (write_d == 1'b1) begin
-                    next_write_done = 1'b1;
-                end
-            end
+      end else begin
+        next_read_addr = read_addr + 1;
+        next_rd_en = 1'b1;
+        if (write_d == 1'b1) begin
+          next_write_done = 1'b1;
         end
-        default :
-        begin
-        end
-    endcase
+      end
+    end
+    default :
+    begin
+    end
+  endcase
 end
 
 // output pipelining
 always @*
 begin
-    next_data = data;
-    next_phase = phase_s;
-    next_tvalid = rd_en_d[3];  //  & rd_valid;
-    if (rd_en_d[3] == 1'b1) begin
-        // reading from top setp of buffers
-        next_phase = read_addr_d4;
-        if (rd_side_d[3] == 1'b0) begin
-            next_data = buffer_0;
-        end else begin
-            next_data = buffer_1;
-        end
+  next_data = data;
+  next_phase = phase_s;
+  next_tvalid = rd_en_d[3];  //  & rd_valid;
+  if (rd_en_d[3] == 1'b1) begin
+    // reading from top setp of buffers
+    next_phase = read_addr_d4;
+    if (rd_side_d[3] == 1'b0) begin
+      next_data = buffer_0;
+    end else begin
+      next_data = buffer_1;
     end
+  end
 end
 
 // Block used for keeping track of input sample count.  Performs roll-over at specifed point.
@@ -286,6 +289,5 @@ input_buff_RAM buff_1 (
   .addrb(raddr[7:0]),  // input wire [10 : 0] addrb
   .doutb(buffer_1)  // output wire [35 : 0] doutb
 );
-
 
 endmodule

@@ -1,6 +1,6 @@
 /* -*- c++ -*- */
 /*
- * Copyright 2017 <+YOU OR YOUR COMPANY+>.
+ * Copyright 2017-2018 Ettus Research
  *
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ private:
             sr_write(SR_RELOAD, boost::uint32_t(taps_fi[i]));
             printf("tap[%d] = %d\n", (int) i, (int) boost::uint32_t(taps_fi[i]));
         }
-        sr_write(SR_RELOAD_TLAST, boost::uint32_t(taps_fi.back())); 
+        sr_write(SR_RELOAD_TLAST, boost::uint32_t(taps_fi.back()));
         printf("final tap = %d\n", (int) boost::uint32_t(taps_fi.back()));
         printf("set_taps() done\n");
     }
@@ -145,7 +145,6 @@ private:
             ret_val.push_back(1 - sign[i]*y);
         }
     }
-
 
     int
     nextpow2(const int value)
@@ -212,7 +211,6 @@ private:
         }
 
         int N = A_vals.size();
-        // idx = np.arange(N / 2)
 
         for (int i=0; i < N / 2; i++)
         {
@@ -227,9 +225,6 @@ private:
         {
             A_vals[i] = std::pow(A_vals[i], exponent);
         }
-        // cast A as complex.
-        // gr_complex *A_complex = new gr_complex;
-        // volk_32f_x2_interleave_32fc(A_complex, &A_vals[0], q_a, A_vals.size());
 
         int fil_size = (int) A_vals.size();
         gr::fft::fft_complex *d_fwdfft = new gr::fft::fft_complex(fil_size, false, 1);
@@ -243,7 +238,6 @@ private:
         {
             temp_grc = (gr_complex) A_vals[j];
             A_comp.push_back(temp_grc);
-            // printf("A_comp[%d] = %f + j%f;\n", j, temp_grc.real(), temp_grc.imag());
         }
 
         // copy A values into fft input buffer
@@ -254,7 +248,6 @@ private:
         gr_complex *b = d_fwdfft->get_outbuf();
         gr_complex *b_copy;
 
-        // memcpy(b_copy, b, fft_size);
         // perform shift
         int shift_pt = fil_size >> 1;
         float sum_b = 0.;
@@ -271,19 +264,12 @@ private:
         {
             ret_val[i] = ret_val[i] / sum_b;
         }
-        // take real part of b.
-        //
-
-        // b = np.fft.ifft(A)
-        // b = (np.fft.fftshift(b)).real
-        // b /= np.sum(b)
         delete d_fwdfft;
     }
 
     void
     gen_fixed_filter(const gr_vector_float& taps, const int fft_size, const int desired_msb, gr_vector_int& output_vector)
     {
-        // float max_coeff_val = (2. **(qvec_coef[0] - 1) - 1) * (2. ** -self.qvec_coef[1])
         float max_coeff_val = (std::pow(2., (float) qvec_coef[0] - 1.) - 1.) * std::pow(2., (float)-qvec_coef[1]);
         int max_input = (int) std::pow(2., (float) qvec[0] - 1.) - 1;
 
@@ -333,14 +319,10 @@ private:
         s_gain = std::max_element(path_gain.begin(), path_gain.end());
         // // compute noise and signal gain.
         int gain_msb = nextpow2(*s_gain);
-        //
-        // gain_msb = self.nextpow2(s_gain)
         int max_coef_val = (int) std::pow(2.,  (float) gain_msb - 1.);
         float in_use = (float) *s_gain / (float) max_coef_val;
-        // // print(np.max(s_gain), np.max(max_input))
         int int_max_value = *s_gain * max_input;
         int num_bits = ret_num_bitsS(int_max_value);
-        // // print(num_bits)
         int msb = num_bits - 1;
         if (in_use <= .9)
         {
@@ -356,7 +338,6 @@ private:
                 }
             }
         }
-        //
         if (desired_msb < msb)
         {
             int diff = msb - desired_msb;
@@ -371,10 +352,6 @@ private:
 
         // reshape poly_fi into single vector with padding.
         int pad = max_fft_size - fft_size;
-        // // print("msb = {}".format(msb))
-        // // taps_fi = np.reshape(poly_fil, (1, -1), order='F')
-        // poly_fil = poly_fil.astype(np.int32)
-        //
         for (int j=0; j < taps_per_phase; j++)
         {
             for (int i=0; i < fft_size; i++)
@@ -390,7 +367,6 @@ private:
             printf("output_vector[i] = %d\n", output_vector[i]);
         }
     }
-
 };
 
 UHD_RFNOC_BLOCK_REGISTER(chanmux_block_ctrl,"chanmux");

@@ -33,7 +33,6 @@ namespace gr {
      private:
          size_t d_fft_size;
          gr::thread::mutex d_mutex; // mutex to protect set/work access
-        //  int nextpow2(unsigned int i);
 
      public:
       chanmux_impl(const gr::ettus::device3::sptr &dev, const int block_select, const int device_select);
@@ -41,8 +40,6 @@ namespace gr {
 
       void set_block_size(const int fft_size);
       void get_block_size();
-      // Where all the action really happens
-      // void forecast (int noutput_items, gr_vector_int &ninput_items_required);
     };
 
   } // namespace pfb_channelizer
